@@ -7,11 +7,28 @@
 <body>
     <input class ="btn btn-primary" type="submit" onclick="soap()">
     <?php
-	    $cnn = new MongoClient(); 
-	    $db = $cnn->Maets;
-	    $collectionJoueur = $db->Joueur;
-	    var_dump($db); die();
-	    var_dump($collectionJoueur); die();
+        function returnConnection(){
+        $cnn = new MongoClient(); 
+        return $cnn;
+        }
+        function getUser($name){
+            return returnConnection()->Maets->Joueur->findOne(array('pseudo' => $name));               
+        }
+        function getNextID(){
+            return count(returnConnection()->Maets->Joueur->find()) + 1;
+        }
+        function insertNewPlayer($name, $badge, $game){
+            $Joueur = array("_id" => getNextID(), "pseudo" => $name, "jeux" => array("scores" => 0, "name" => $game, "badges" => array("name" => $badge)));
+            returnConnection()->Maets->Joueur->insert($Joueur);
+        }
+        $user = getUser('Kibin enyere');
+        if (!isset($user)){
+            //Si l'utilisateur n'existe pas, on insert
+            insertNewPlayer("Jochaz", "Premier match up", "League of Legends");
+            echo 'ok';
+        }
+
+
     ?>
     <div id='result'>
     
@@ -31,7 +48,9 @@
             type : 'PUT',
             dataType : 'text', // On désire recevoir du HTML
             success : function(code_html, statut){ // code_html contient le HTML renvoyé
-                alert('toto');
+               //alert('toto');
+               //document.location.href="/stats/Lol"
+                console.log(message);
             }
          });
     }

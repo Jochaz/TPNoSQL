@@ -42,7 +42,23 @@
             echo 'Insertion réussi';
         } else {
             //Si l'utilisateur existe, on regarde si il a déjà joué au jeu            
-            
+            $lesJeux = $player['jeux']; 
+            $trouveLeJeu = False;
+            foreach ($lesJeux as $key) {
+                if ($key['name'] == $nomDuJeu){
+                    $trouveLeJeu = True;
+                }
+            }
+
+            if ($trouveLeJeu){
+                //Si le joueur a deja jouer au jeu alors on ajoute le badge associé
+                $Condition = array()
+                $Requete = array()
+                returnConnection()->Maets->Joueur->update()
+            }
+            else{
+
+            }
         }
 
     }

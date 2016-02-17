@@ -37,13 +37,9 @@ th
 <h1><a href="index.php">Maets</a></h1>
 <br/><br/>
 <a href="joueur.php"> Rechercher un joueur </a><br/>
-<a href="jeux.php"> Rechercher un jeu </a>
-    
-    
-    
-    
-
-    
+<a href="jeux.php"> Rechercher un jeu </a><br/>
+<a href="compare.php">Comparer deux joueurs </a>  
+       
     
 <script>
 

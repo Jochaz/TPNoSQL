@@ -12,6 +12,21 @@
 	clear: none;
 }
 
+table
+
+{
+    border-collapse: collapse; 
+}
+
+td
+{
+    border: 1px solid black;
+	padding: 4px;
+}
+th
+{
+	padding: 4px;
+}
 
 </style>
 
@@ -58,13 +73,13 @@
 
     function getBadges(element) {
 
-    	$('#jeux td').each(function () {
+    	$('#jeux tr').each(function () {
     		this.style["background-color"] = "FCFEFE";
     	});
 
     	element.style["background-color"] = "#D3CBFB";
-        
-        var game = element.innerHTML;
+        //console.log();
+        var game = element.getAttribute("data-game");
         
         var joueur = $('#player').val();
         $.ajax({

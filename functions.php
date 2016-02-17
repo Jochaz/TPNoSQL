@@ -17,15 +17,13 @@
             
             if($joueur){
                 $response[] = "<input type='hidden' id='player' value='" . $player ."'>";
-                $response[] = '<table border="1"><th>Les jeux de ' . $player . '</th>';
+                $response[] = '<table border="1"><th>Les jeux de ' . $player . '</th><th> Hight scores </th>';
                 if($joueur['jeux']){
                     foreach ($joueur['jeux'] as $value){
-                        
-                        foreach ($value as $key => $result){
-                            if($key == "name")
-                                $response[] = '<tr ><td onclick="getBadges(this);">' . $result . '</td></tr>';
-                        }
-                
+                        $response[] = '<tr onclick="getBadges(this)" data-game="' . $value['name']. '">';
+                        $response[] = '<td>' . $value['name'] . '</td>';
+                        $response[] = '<td>' . $value['scores'] . '</td>';
+                        $response[] = '</tr>';
                     }
                 }else{
                     $response[] = 'Aucun jeu n\'a été trouvé pour cet utilisateur';                    
@@ -45,11 +43,11 @@
             $cnn = new MongoClient();
             $db = $cnn->Maets;
             $collectionJoueur = $db->Joueurs;
-        
             $query = array( "pseudo" => $player);
             $champs = array('jeux' => true);
             $joueur = $collectionJoueur->findOne($query);
-        
+            
+            
             $response = array();
         
             if($joueur){
@@ -71,6 +69,8 @@
             }else{
                 $response[] =  'Cet utilisateur n\'existe pas';
             }
+            
+            
             echo implode("", $response);
             die();
         }  

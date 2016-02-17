@@ -39,17 +39,8 @@
         } else {
             //Si l'utilisateur existe, on regarde si il a déjà joué au jeu            
             $lesJeux = $player['jeux']; 
-            $trouveLeJeu = False;
-            foreach ($lesJeux as $key) {
-                if (!is_null($key['name'])){
-                    if ($key['name'] == $nomDuJeu){
-                        $trouveLeJeu = True;
-                    }
-                }    
-            }
-
-            if (!$trouveLeJeu){
-                //Si le joueur a deja jouer au jeu alors on ajoute le badge associé
+            if (!in_array($nomDuJeu, $lesJeux)){
+                //Si le joueur a jamais jouer au jeu alors on ajoute le badge associé
                 returnConnection()->Maets->Joueurs->update(array("pseudo" => $user), array('$push' => array("jeux" => array("scores" => 0, "name" => $nomDuJeu, "badges" => array(array("name" => $badge))))));
             }
             else{

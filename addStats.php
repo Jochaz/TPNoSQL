@@ -35,15 +35,27 @@
         $player = getUser($user);
         if (is_null($player)){
             //Si l'utilisateur n'existe pas, on insert
+            echo 'insert';
             insertNewPlayer($user, $badge, $nomDuJeu);
         } else {
             //Si l'utilisateur existe, on regarde si il a déjà joué au jeu            
             $lesJeux = $player['jeux']; 
-            if (!in_array($nomDuJeu, $lesJeux)){
+            $trouve = false;
+            if (!is_null($lesJeux)){
+                foreach ($lesJeux as $jeu ) {
+                    if ($jeu['name'] == $nomDuJeu){
+                        $trouve = true;
+                    }
+                }
+            }
+
+            if (!$trouve){
+                echo 'ajout jeu et badge';
                 //Si le joueur a jamais jouer au jeu alors on ajoute le badge associé
                 returnConnection()->Maets->Joueurs->update(array("pseudo" => $user), array('$push' => array("jeux" => array("scores" => 0, "name" => $nomDuJeu, "badges" => array(array("name" => $badge))))));
             }
             else{
+                echo 'ajout badge';
                 //Sinon on ajoute le jeu et le badge associé
                 returnConnection()->Maets->Joueurs->update(array("pseudo" => $user, "jeux.name" => $nomDuJeu), array('$push' => array("jeux.$.badges" => array("name" => $badge))));
             }

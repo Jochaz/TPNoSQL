@@ -59,7 +59,7 @@
                     foreach ($joueur['jeux'] as $value){
                         if($value['name'] == $game){
                             foreach ($value['badges'] as $badge){
-                                $response[] = '<tr ><td>' . $badge["nom"] . '</td></tr>';
+                                $response[] = '<tr ><td>' . $badge["name"] . '</td></tr>';
                             } 
                         }
 

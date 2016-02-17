@@ -33,7 +33,6 @@
         else{
             
             if (!in_array($nomDuJeu, $result)){
-                echo 'blabla';
                 returnConnection()->Maets->Joueurs->update(array("pseudo" => $user, "jeux.name" => $nomDuJeu), array('$set' => array("jeux.$.scores" => $score)));
             }
             else {

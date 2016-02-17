@@ -198,5 +198,58 @@
             echo implode("", $response);
             die();
         }
+
+
+        if($_GET['type'] == "compare" && isset($_GET['pseudo1']) && isset($_GET['pseudo2']) && isset($_GET['game'])){
+            $game = $_GET['game'];
+            $joueur1 = $_GET['pseudo1'];
+            $joueur2 = $_GET['pseudo2'];
+            $cnn = new MongoClient();
+            $db = $cnn->Maets;
+            $collectionJoueur = $db->Joueurs;
+            $joueur1 = $collectionJoueur->findOne(array("pseudo" => $joueur1));
+            $joueur2 = $collectionJoueur->findOne(array("pseudo" => $joueur2));  
+            if (!is_null($joueur1) && !is_null($joueur2)){
+                $jeuxJoueur1 = $joueur1['jeux'];
+                $jeuxJoueur2 = $joueur2['jeux'];
+                if (!is_null($jeuxJoueur1) && !is_null($jeuxJoueur2)){
+                    $game1 = false;
+                    $game2 = false;
+                    foreach ($jeuxJoueur1 as $key) {
+                        if ($key['name'] == $game){
+                            $game1 = true;
+                            $gameJoueur1 = $key;
+                        }
+                    }
+                    
+                    foreach ($jeuxJoueur2 as $key) {
+                        if ($key['name'] == $game){
+                            $game2 = true;
+                            $gameJoueur2 = $key;
+                        }
+                    }
+                    if ($game1 && $game2){
+                        echo '<h4 align="center">Comparaison pour le jeu ' . $game . '</h4>';
+                        echo '<table align="center" border="1"><tr><th>Nom du joueur '.$_GET['pseudo1'].'</th></tr>';
+                        $badgesJoueur1 = $gameJoueur1['badges'];
+                        $badgesJoueur2 = $gameJoueur2['badges'];
+                        //echo '<tr>';
+
+                        foreach ($badgesJoueur1 as $key) {
+                            echo '<tr><td>'.$key['name'].'</td></tr>';
+                        }
+                        echo '</table>';
+                        echo '<br/>';
+                        echo '<table align="center" border="1"><tr><th>Nom du joueur '.$_GET['pseudo2'].'</th></tr>';
+                        foreach ($badgesJoueur2 as $key) {
+                            echo '<tr><td>'.$key['name'].'</td></tr>';
+                        }
+                        //echo '</tr>';
+                       
+                    }
+                }
+            }         
+
+        }
         
         

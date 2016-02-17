@@ -34,7 +34,7 @@ th
 
 </head>
 <body>
-<h1><a href="index.php">Maets</a></h1>
+<h1><a href="index.php">Maets</a></h1><br /><br />
         Nom du joueur: 
         <input id="pseudo" type="text" value="">
         <input type="submit" value="Afficher" onclick="getJeux()">

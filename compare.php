@@ -12,7 +12,7 @@
 </style>
 </head>
 <body>
-<h3>Maets</h3>
+<h1><a href="index.php">Maets</a></h1><br /><br />
     <div id="Recherche">
         Comparaison
         <br />

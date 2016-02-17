@@ -34,35 +34,33 @@ th
 </head>
 <body>
 <h3>Maets</h3>
-        Nom du joueur: 
-        <input id="pseudo" type="text" value="">
-        <input type="submit" value="Afficher" onclick="getJeux()">
-    
-    <br/> <br />
+        Nom du jeu:
+        <input id=jeu type="text" name="nom" value="">
+        <input type="submit" value="Afficher" onclick="getJeu()">
+        <br/> <br />
     <div class="parent">
-        <div id='jeux'></div>
+        <div id='classement'></div>
         <div style="margin-left: 30px;" id='badges'></div>
     </div>
 
     
     
 <script>
-    function getJeux() {
+    function getJeu() {
         
-        var joueur = $('#pseudo').val();
+        var jeu = $('#jeu').val();
         $.ajax({
 
             url : 'functions.php',
             //data: 'data= ' + $getValue.value,
-            data: 'type=jeuxByJoueur' + '&pseudo=' + joueur,
+            data: 'type=classementByJeu' + '&jeu=' + jeu,
 
             type : 'GET',
 
             dataType : 'text', // On désire recevoir du HTML
 
             success : function(code_html, statut){ // code_html contient le HTML renvoyé
-                $('#jeux').html(code_html);
-                $('#badges').html("");
+                $('#classement').html(code_html);
             }
 
          });
@@ -72,20 +70,22 @@ th
 
     function getBadges(element) {
 
-    	$('#jeux tr').each(function () {
+    	console.log(element);
+    	$('#classement tr').each(function () {
     		this.style["background-color"] = "FCFEFE";
     	});
 
     	element.style["background-color"] = "#D3CBFB";
         //console.log();
-        var game = element.getAttribute("data-game");
+        var jeu = $('#jeu').val();
         
-        var joueur = $('#player').val();
+        var joueur = element.getAttribute("data-player");
+        console.log(joueur);
         $.ajax({
 
             url : 'functions.php',
             //data: 'data= ' + $getValue.value,
-            data: 'type=badgesByJeuByJoueur' +  '&game=' + game + '&player=' + joueur,
+            data: 'type=badgesByJeuByJoueur' +  '&game=' + jeu + '&player=' + joueur,
 
             type : 'GET',
 

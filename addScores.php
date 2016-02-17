@@ -26,8 +26,8 @@
         $data = json_decode(file_get_contents("php://input"), true);
         $user = $data['player'];
         $score = $data['score'];    
-        $user = 'jojo';
-        $score = 665;
+        //$user = 'jojo';
+        //$score = 665;
         $result = returnConnection()->Maets->Joueurs->findOne(array("pseudo" => $user));
         if (is_null($result)){
             insertNewPlayer($user, $score, $nomDuJeu);

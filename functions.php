@@ -40,7 +40,7 @@
         }
         
         // recherche de badges par jeu et par joueur
-        if($_GET['type'] == "badgesByJeuByJoueur" && isset($_GET['player']) && $_GET['game']){
+        if($_GET['type'] == "badgesByJeuByJoueur" && isset($_GET['player']) && isset($_GET['game'])){
             $player = $_GET['player'];
             $game = $_GET['game'];
             $cnn = new MongoClient();
@@ -54,12 +54,15 @@
             $response = array();
         
             if($joueur){
+                $response[] = "<input type='hidden' id='player' value='" . $player ."'>";
                 $response[] = '<table align="center" border="1"><th>Les badges de ' . $player . ' pour le jeu ' . $game . '</th>';
                 if($joueur['jeux']){
                     foreach ($joueur['jeux'] as $value){
                         if($value['name'] == $game){
                             foreach ($value['badges'] as $badge){
-                                $response[] = '<tr ><td>' . $badge["name"] . '</td></tr>';
+                                $response[] = '<tr ><td>' . $badge["name"] . '</td><td onclick="if (confirm(\'Supprimer ce badge?\')) {removeBadge(\'' . $badge["name"] .'\', \'' . $game .'\')}">X</td></tr>';
+                                
+                               // $response[] = '<tr ><td>' . $badge["name"] . '</td><td onclick="removeBadge(\'' . $badge["name"] .'\', \'' . $game .'\')">X</td></tr>';
                             } 
                         }
 
@@ -67,6 +70,7 @@
                     }
                 }
                 $response[] =  '</table>';
+                $response[] = '<br /><input  id="badgeAdd" type="text" value=""><input type="submit" value="AJouter le badge" onclick="addBadge(\'' . $player . '\',\'' . $game . '\')" >';
             }else{
                 $response[] =  'Cet utilisateur n\'existe pas';
             }
@@ -75,10 +79,9 @@
             echo implode("", $response);
             die();
         } 
-        
-        
+ 
         // recherche classement par jeu (meilleur score)
-        if($_GET['type'] == "classementByJeu" && $_GET['jeu']){
+        if($_GET['type'] == "classementByJeu" && isset($_GET['jeu'])){
             $game = $_GET['jeu'];
             $cnn = new MongoClient();
             $db = $cnn->Maets;
@@ -111,17 +114,12 @@
             
             $jeu = $collectionJoueur->aggregateCursor($query);
             
-            
-      
-            
             //$jeu->sort(array('jeux.scores' => -1));
             //$jeu->limit(5);
             $response = array();
-            $response[] = '<h4>Top 5 pour le jeu ' . $game . '</h4>';
             $response[] = '<table align="center" border="1"><tr><th>Nom du joueur</th>';
             $response[] = '<th>Meilleur score</th></tr>';
-            foreach ($jeu as $doc) {
-                
+            foreach ($jeu as $doc) {   
                 
                // print_r($doc);die();
                 if($doc){
@@ -141,7 +139,60 @@
             }
             
             $response[] =  '</table>';
+            echo implode("", $response);
+            die();
+        }      
+        
+        
+        
+        
+        
+        // recherche de badges par jeu et par joueur
+        if($_GET['type'] == "removeBadge" && isset($_GET['player']) && isset($_GET['game']) && isset($_GET['badge'])){
+            $player = $_GET['player'];
+            $game = $_GET['game'];
+            $badge = $_GET['badge'];
+            $cnn = new MongoClient();
+            $db = $cnn->Maets;
+            $collectionJoueur = $db->Joueurs;
             
+            $result = $collectionJoueur->update(
+                array('pseudo' => $player, "jeux.badges.name" => $badge),
+                array('$pull' =>
+                    array('jeux.$.badges' => array('name' => $badge))
+                )
+            );
+            
+            if(!$result) die('erreur');
+            
+            $query = array( "pseudo" => $player);
+            $champs = array('jeux' => true);
+            $joueur = $collectionJoueur->findOne($query);
+        
+        
+            $response = array();
+        
+            if($joueur){
+                $response[] = "<input type='hidden' id='player' value='" . $player ."'>";
+                
+                $response[] = '<table align="center" border="1"><th>Les badges de ' . $player . ' pour le jeu ' . $game . '</th>';
+                if($joueur['jeux']){
+                    foreach ($joueur['jeux'] as $value){
+                        if($value['name'] == $game){
+                            foreach ($value['badges'] as $badge){
+                                $response[] = '<tr ><td>' . $badge["name"] . '</td><td onclick="if (confirm(\'Supprimer ce badge?\')){ removeBadge(\'' . $badge["name"] .'\', \'' . $game .'\')}">X</td></tr>';
+                            }
+                        }
+        
+        
+                    }
+                }
+                $response[] =  '</table>';
+                
+                $response[] = '<br /><input id="badgeAdd" type="text" value=""><input type="submit" value="AJouter le badge" onclick="addBadge(\'' . $player . '\',\'' . $game . '\')" >';
+            }else{
+                $response[] =  'Cet utilisateur n\'existe pas';
+            }
         
         
             echo implode("", $response);
@@ -149,4 +200,3 @@
         }
         
         
-      

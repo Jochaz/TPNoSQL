@@ -2,6 +2,7 @@
 <head>
     <title>Maets</title>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+	
 <meta charset="UTF-8">
 
 
@@ -33,7 +34,7 @@ th
 
 </head>
 <body>
-<h3>Maets</h3>
+<h1><a href="index.php">Maets</a></h1>
         Nom du joueur: 
         <input id="pseudo" type="text" value="">
         <input type="submit" value="Afficher" onclick="getJeux()">
@@ -47,6 +48,10 @@ th
     
     
 <script>
+
+
+
+
     function getJeux() {
         
         var joueur = $('#pseudo').val();
@@ -98,6 +103,64 @@ th
 
          });
 
+    }
+
+
+    function removeBadge(badge, jeu) {
+
+       
+        var joueur = $('#player').val();
+        $.ajax({
+
+            url : 'functions.php',
+            //data: 'data= ' + $getValue.value,
+            data: 'type=removeBadge' +  '&game=' + jeu + '&player=' + joueur + '&badge=' + badge,
+
+            type : 'GET',
+
+            dataType : 'text',
+
+            success : function(code_html, statut){
+                $('#badges').html(code_html);
+
+            }
+
+         });
+
+    }
+
+
+
+
+
+    function addBadge(joueur, jeu) {
+
+        var badge = $('#badgeAdd').val();
+        
+    	var message = JSON.stringify({
+        		"player": joueur,
+        		"badge": badge
+        	});
+        $.ajax({
+
+            url : '/stats/' + jeu,
+            //data: 'data= ' + $getValue.value,
+            data: message,
+            //contentType: 'application/json',
+            type : 'put',
+            dataType : 'json',
+            success : function(code_html, statut){
+                alert('gello');
+                //$('#badges').html(code_html);
+                console.log('<tr ><td>test</td><td onclick="if (confirm(\'Supprimer ce badge?\')) {removeBadge(\'test\', \'test\')}">X</td></tr>');
+                $('#badges table tbody').append('<tr ><td>test</td><td onclick="if (confirm(\'Supprimer ce badge?\')) {removeBadge(\'test\', \'test\')}">X</td></tr>');
+                
+
+            }
+
+         });
+        $('#badges table tbody').append('<tr ><td>' + badge + '</td><td onclick="if (confirm(\'Supprimer ce badge?\')) {removeBadge(\'' + badge +'\', \'' + jeu +'\')}">X</td></tr>');
+        
     }
     
 </script>

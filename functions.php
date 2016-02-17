@@ -83,26 +83,54 @@
             $cnn = new MongoClient();
             $db = $cnn->Maets;
             $collectionJoueur = $db->Joueurs;
-            $query = array( 'jeux.name' => $game);
-            $jeu = $collectionJoueur->find($query);
-            $jeu->sort(array('jeux.scores' => -1));
-            $jeu->limit(5);
+            //$query = array('jeux.name' => $game);
+            
+           
+             $query =array(
+                            array('$match' => 
+                                            array('jeux.name' => $game)
+                                
+                            ),
+                            array('$project' => 
+                                            array('jeux' => 
+                                                        array('$filter' => 
+                                                                        array("input" => '$jeux', 'as' => 'jeu', 'cond' => 
+                                                                                                                       array('$eq'=> ['$$jeu.name', $game])
+                                                                            
+                                                                               )
+                                                            
+                                                            ), 'pseudo' => 1
+                                                
+                                                   )
+                                   ),
+                            array('$sort' => array('jeux.scores' => -1)),
+                            array('$limit' => 5)
+                
+              );
+            
+            
+            $jeu = $collectionJoueur->aggregateCursor($query);
+            
+            
+      
+            
+            //$jeu->sort(array('jeux.scores' => -1));
+            //$jeu->limit(5);
             $response = array();
             $response[] = '<h4>Top 5 pour le jeu ' . $game . '</h4>';
             $response[] = '<table align="center" border="1"><tr><th>Nom du joueur</th>';
             $response[] = '<th>Meilleur score</th></tr>';
             foreach ($jeu as $doc) {
+                
+                
+               // print_r($doc);die();
                 if($doc){
 
                     if($doc['jeux']){
                         foreach ($doc['jeux'] as $value){
-                            if($value['name'] == $game){
                                 $response[] = '<tr onclick="getBadges(this)" data-player="' . $doc["pseudo"]. '"><td>' . $doc["pseudo"] . '</td>';
                                 $response[] = '<td>' . $value["scores"] . '</td></tr>';
                             }
-                        }
-            
-            
                     }else{
                         $response[] = 'Aucun jeu n\'a été trouvé pour cet utilisateur';
                     }

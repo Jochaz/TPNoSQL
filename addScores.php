@@ -26,14 +26,27 @@
         $data = json_decode(file_get_contents("php://input"), true);
         $user = $data['player'];
         $score = $data['score'];    
+        $user = 'jojo';
+        $score = 665;
         $result = returnConnection()->Maets->Joueurs->findOne(array("pseudo" => $user));
         if (is_null($result)){
             insertNewPlayer($user, $score, $nomDuJeu);
         }
         else{
+            $scoreJeu = 0;
+            $lesJeux = $result['jeux']; 
+            if (!is_null($lesJeux)){
+                foreach ($lesJeux as $jeu ) {
+                    if ($jeu['name'] == $nomDuJeu){
+                        $scoreJeu = $jeu['scores'];
+                    }
+                }
+            }
             
             if (!in_array($nomDuJeu, $result)){
-                returnConnection()->Maets->Joueurs->update(array("pseudo" => $user, "jeux.name" => $nomDuJeu), array('$set' => array("jeux.$.scores" => $score)));
+                if ($scoreJeu < $score){
+                    returnConnection()->Maets->Joueurs->update(array("pseudo" => $user, "jeux.name" => $nomDuJeu), array('$set' => array("jeux.$.scores" => $score)));
+                }
             }
             else {
                 returnConnection()->Maets->Joueurs->update(array("pseudo" => $user), array('$push' => array("jeux" => array("scores" => $score, "name" => $nomDuJeu, "badges" => array()))));

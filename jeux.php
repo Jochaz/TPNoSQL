@@ -61,6 +61,7 @@ th
 
             success : function(code_html, statut){ // code_html contient le HTML renvoyé
                 $('#classement').html(code_html);
+                $('#badges').html("");
             }
 
          });
